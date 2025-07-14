@@ -25,9 +25,9 @@ SCRIPTLET='
     temp_response_file=$(mktemp)
 
     # -- MEMORY: Prepend the history to the new prompt --
-    /usr/bin/stdbuf -oL /home/linuxbrew/.linuxbrew/bin/ollama run "$model" "$CONVERSATION_HISTORY $current_prompt" | \
+    /usr/bin/stdbuf -oL /usr/bin/ollama run "$model" "$CONVERSATION_HISTORY $current_prompt" | \
     /usr/bin/tee "$temp_response_file" | \
-    /home/linuxbrew/.linuxbrew/bin/deno run --allow-run "$RENDERER_SCRIPT"
+    /usr/bin/deno run --allow-run "$RENDERER_SCRIPT"
 
     # -- MEMORY: Update the history with the new exchange --
     local assistant_response
