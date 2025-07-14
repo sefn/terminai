@@ -14,7 +14,7 @@ Move `render_stream.ts` and `ask_llm.sh` to `/usr/local/bin` and make them execu
 
 Then add a keyboard shortcut to launch `ask_llm.sh`, for example SUPER+Backspace, in your DE of choice (like KDE).
 
-You can change the model name in `ask_llm.sh` (default is gemma3:27b) and change paths to the commands, since the default ones assume paths a bit wildly.
+You can change the model name in `ask_llm.sh` (default is gemma3:27b) to what you want to use through ollama, and change paths to the commands if needed.
 
 That's it.
 
