@@ -7,6 +7,7 @@ AI chat client for Linux. Can be modified, but currently uses kdialog for the pr
 * Deno (for running glow with streaming)
 * glow (for markdown formatting output)
 * stdbuf (for streaming)
+* kdialog (for the dialog prompt, or modify `ask_llm.sh` with your dialog tool of choice)
 * tee
 
 ## Installation
