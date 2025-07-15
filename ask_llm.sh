@@ -3,7 +3,7 @@
 MODEL=${1:-"gemma3:27b"}
 
 # Get the prompt from the user using an input box
-PROMPT=$(kdialog --inputbox "Enter your prompt for $MODEL:")
+PROMPT=$(kdialog --title "Ask LLM" --inputbox "Enter your prompt for $MODEL:")
 
 # Exit if the user cancelled the dialog or entered nothing.
 if [ $? -ne 0 ] || [ -z "$PROMPT" ]; then
