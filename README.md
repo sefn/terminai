@@ -8,6 +8,7 @@ AI chat client for Linux. Can be modified, but currently uses kdialog for the pr
 * glow (for markdown formatting output)
 * stdbuf (for streaming)
 * kdialog, or rofi or wofi (for the dialog prompt. kdialog is default, you can modify a single line in `ask_llm.sh` with your dialog tool of choice)
+* a terminal of your choice (for the output. kde-ptyxis is default, but you can modify a single line in `ask_llm.sh` with your terminal of choice)
 * tee
 
 ## Installation
