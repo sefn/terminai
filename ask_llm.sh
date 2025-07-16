@@ -4,8 +4,10 @@ MODEL=${1:-"gemma3:27b"}
 
 # Get the prompt from the user using an input box
 PROMPT=$(kdialog --title "Ask LLM" --inputbox "Enter your prompt for $MODEL:")
+# Alternatively, comment above and uncomment or add your own tool for the interface:
+#PROMPT=$(wofi --dmenu --prompt "$PROMPT_TEXT" --lines 1 --hide-scroll --no-actions)
+#PROMPT=$(rofi --dmenu --prompt "$PROMPT_TEXT" --lines 1 --hide-scroll --no-actions)
 
-# Exit if the user cancelled the dialog or entered nothing.
 if [ $? -ne 0 ] || [ -z "$PROMPT" ]; then
     exit 0
 fi
@@ -25,9 +27,9 @@ SCRIPTLET='
     temp_response_file=$(mktemp)
 
     # -- MEMORY: Prepend the history to the new prompt --
-    /usr/bin/stdbuf -oL /usr/bin/ollama run "$model" "$CONVERSATION_HISTORY $current_prompt" | \
+    /usr/bin/stdbuf -oL /usr/local/bin/ollama run "$model" "$CONVERSATION_HISTORY $current_prompt" | \
     /usr/bin/tee "$temp_response_file" | \
-    /usr/bin/deno run --allow-run "$RENDERER_SCRIPT"
+    /home/linuxbrew/.linuxbrew/bin/deno run --allow-run "$RENDERER_SCRIPT"
 
     # -- MEMORY: Update the history with the new exchange --
     local assistant_response
@@ -56,4 +58,5 @@ SCRIPTLET='
   done
 '
 
-kde-ptyxis --title "LLM Chat: $MODEL" -x "sh -c '$SCRIPTLET' _ \"$MODEL\" \"$PROMPT\" \"$RENDERER_PATH\""
+# Output in terminal - modify for your terminal of choice.
+kde-ptyxis --title "LLM Chat: $MODEL" -x "sh -c '$SCRIPTLET' _ \"$MODEL\" \"$PROMPT\""
