@@ -7,7 +7,7 @@ AI chat client for Linux. Can be modified, but currently uses kdialog for the pr
 * Deno (for running glow with streaming)
 * glow (for markdown formatting output)
 * stdbuf (for streaming)
-* kdialog (for the dialog prompt, or modify `ask_llm.sh` with your dialog tool of choice)
+* kdialog, or rofi or wofi (for the dialog prompt, or modify `ask_llm.sh` with your dialog tool of choice)
 * tee
 
 ## Installation
@@ -17,6 +17,9 @@ Move `render_stream.ts` and `ask_llm.sh` to `/usr/local/bin` and make them execu
 Then add a keyboard shortcut to launch `ask_llm.sh`, for example SUPER+Backspace, in your DE of choice (like KDE).
 
 You can change the model name in `ask_llm.sh` (default is gemma3:27b) to what you want to use through ollama, and change paths to the commands if needed (currently assumes absolute paths).
+
+If you want to use another dialog for the prompt, for example `rofi` or `wofi`, change the PROMPT line in `ask_llm.sh` from kdialog to whatever. Examples:
+* `wofi`: PROMPT=$(wofi --dmenu --prompt "$PROMPT_TEXT" --lines 1 --hide-scroll --no-actions)
 
 That's it.
 
