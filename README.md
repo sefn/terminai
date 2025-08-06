@@ -40,5 +40,6 @@ That's it.
 wofi version of prompt dialog:
 <img width="853" height="118" alt="image" src="https://github.com/user-attachments/assets/b599f766-d5b4-4b52-9f71-68049a2690d1" />
 
-Terminal output with continuous chat, formatting (of markdown and thinking tags (gpt-oss in this example)) and history/memory of the previous prompt:
-<img width="1274" height="2097" alt="image" src="https://github.com/user-attachments/assets/17ed4508-0b26-4145-8cf5-dcdb7ee8c061" />
+Terminal output:
+<img width="1274" height="2097" alt="image" src="https://github.com/user-attachments/assets/22597d5a-8995-4155-8455-4a8026619004" />
+(Notice the continuous chat, formatting (of markdown and thinking tags (gpt-oss in this example)) and history/memory of the previous prompt)
