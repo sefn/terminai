@@ -1,26 +1,37 @@
-# simple-kde-ai-chat
-AI chat client for Linux. Can be modified, but currently uses kdialog for the prompt, and a terminal (e.g. kde-ptyxis) for streaming output and allowing subsequent prompts with memory. Markdown formatting with deno + glow
+# terminai
+Local LLM chat interface for Linux.
+
+Keyboard shortcut to open a prompt dialog, then terminal for output and further chat (with formatting for markdown and thinking tags, chat history).
+
+## Features
+
+Portable and modifiable.
+Use a dialog like wofi or kdialog for the prompt, and a terminal (e.g. ptyxis or whatever you like) for streaming output and allowing subsequent prompts with memory. Markdown formatting (and formatting of thinking tags) with deno + glow.
 
 ## Dependencies
 
-* Ollama (with any model installed)
+* Ollama (with any model installed, e.g. gpt-oss or gemma3 etc)
 * Deno (for running glow with streaming)
 * glow (for markdown formatting output)
 * stdbuf (for streaming)
-* kdialog, or rofi or wofi (for the dialog prompt. kdialog is default, you can modify a single line in `ask_llm.sh` with your dialog tool of choice)
-* a terminal of your choice (for the output. kde-ptyxis is default, but you can modify a single line in `ask_llm.sh` with your terminal of choice)
+* wofi, or kdialog or rofi (for the dialog prompt. wofi is default, you can modify a single line (PROMPT variable) in `ask_llm.sh` with your dialog tool of choice)
+* a terminal of your choice (for the output. kde-ptyxis is default, but you can modify a single line (the last one) in `ask_llm.sh` with your terminal of choice)
 * tee
 
 ## Installation
 
 Move `render_stream.ts` and `ask_llm.sh` to `/usr/local/bin` and make them executable with `chmod +x`.
 
-Then add a keyboard shortcut to launch `ask_llm.sh`, for example SUPER+Backspace, in your DE of choice (like KDE).
+Then add a keyboard shortcut to launch `ask_llm.sh`, for example SUPER+Backspace, in your DE of choice (e.g. KDE).
 
-You can change the model name in `ask_llm.sh` (default is gemma3:27b) to what you want to use through ollama, and change paths to the commands if needed (currently assumes absolute paths).
+You can change the model name in `ask_llm.sh` (default is gpt-oss:20b) to whatever you want to use through ollama.
 
-If you want to use another dialog for the prompt, for example `rofi` or `wofi`, change the PROMPT line in `ask_llm.sh` from kdialog to whatever. Examples:
-* `wofi`: PROMPT=$(wofi --dmenu --prompt "$PROMPT_TEXT" --lines 1 --hide-scroll --no-actions)
+You can change the dialog used for the prompt, for example `rofi` or `kdialog` (`wofi` is default). Just change the PROMPT variable in `ask_llm.sh` to whatever. Same for the terminal (last line of `ask_llm.sh`).
+
+## Wofi customization
+
+If you use wofi, you can copy-paste the contents of .config/wofi to your home folder to make it look like the wofi screenshot below.
+
 
 That's it.
 
