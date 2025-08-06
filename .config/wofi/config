@@ -2,7 +2,7 @@
 mode=dmenu
 width=650px
 height=390px
-location=left  # Changed from 'left' to 'bottom' for south position
+location=left
 orientation=vertical
 
 ## Images
