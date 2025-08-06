@@ -1,0 +1,15 @@
+## Geometry
+mode=dmenu
+width=650px
+height=390px
+location=left  # Changed from 'left' to 'bottom' for south position
+orientation=vertical
+
+## Images
+allow_markup=true
+allow_images=true
+image_size=30
+
+# Other
+key_accept=Return
+key_insert_nl=Shift+Return
