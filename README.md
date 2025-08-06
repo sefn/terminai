@@ -40,8 +40,5 @@ That's it.
 wofi version of prompt dialog:
 <img width="853" height="118" alt="image" src="https://github.com/user-attachments/assets/b599f766-d5b4-4b52-9f71-68049a2690d1" />
 
-kdialog version of prompt dialog:
-<img width="448" height="384" alt="image" src="https://github.com/user-attachments/assets/a221f25b-b3d9-428c-bdef-c3cbc16175cf" />
-
 Terminal output with continuous chat, formatting (of markdown and thinking tags (gpt-oss in this example)) and history/memory of the previous prompt:
 <img width="1274" height="2097" alt="image" src="https://github.com/user-attachments/assets/17ed4508-0b26-4145-8cf5-dcdb7ee8c061" />
