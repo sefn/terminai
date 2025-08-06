@@ -32,9 +32,6 @@ You can change the dialog used for the prompt, for example `rofi` or `kdialog` (
 
 If you use wofi, you can copy-paste the contents of .config/wofi to your home folder to make it look like the wofi screenshot below. In style.css, change <ABSOLUTE_PATH_TO_YOUR_HOME_DIR> to your home dir, e.g. /home/myuser.
 
-
-That's it.
-
 ## Screenshots
 
 wofi version of prompt dialog:
