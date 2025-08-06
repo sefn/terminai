@@ -1,0 +1,59 @@
+indow {
+margin: 0px;
+border: 0px solid #88c0d0;
+background-color: #2e3440;
+}
+
+#input {
+margin: 5px;
+border: none;
+color: #d8dee9;
+background-color: #3b4252;
+}
+
+#inner-box {
+margin: 5px;
+border: none;
+background-color: #2e3440;
+}
+
+#outer-box {
+margin: 5px;
+border: none;
+background-color: #2e3440;
+}
+
+#scroll {
+margin: 0px;
+border: none;
+}
+
+#text {
+margin: 5px;
+border: none;
+color: #d8dee9;
+}
+
+#entry:selected {
+background-color: #3b4252;
+}
+
+#input {
+    margin: 5px;
+    color: #d8dee9;
+    background-color: #3b4252;
+    border: none;
+
+    padding-left: 60px;
+
+    background-image: url("<ABSOLUTE_PATH_TO_YOUR_HOME_DIR>/.config/wofi/prompt_arrow.svg");
+
+    /* 3. Position the icon on the left side and prevent it from repeating */
+    background-repeat: no-repeat;
+    background-position: 8px center; /* Adjust positioning as needed */
+}
+
+/* This rule is still needed to hide the original search icon */
+#input > image.left {
+    -gtk-icon-transform: scaleX(0);
+}
