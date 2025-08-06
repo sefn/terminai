@@ -10,40 +10,43 @@ if (!cleanOutputFile) {
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 
-// ANSI escape codes for the Alternate Screen Buffer
+// ANSI escape codes
 const enterAlternateScreen = "\x1b[?1049h";
 const exitAlternateScreen = "\x1b[?1049l";
-
-// ANSI escape codes for colors
 const gray = "\x1b[90m";
 const reset = "\x1b[0m";
 
-// The NEW, more robust regex to format the thinking block
+// Regexes
 const thinkingRegex = /^(Thinking\.*.*?\.*done thinking\.?)\s*/s;
+const headingFixRegex = /^\s+(#+)/gm; // Fix for indented headings
 
-let inputBuffer = ""; // This will hold the RAW, un-rendered output
-let finalRenderedOutput = ""; // This will hold the GLOW-RENDERED output for display
+let rawInputBuffer = ""; // Holds the pure, raw text from ollama
+let finalDisplayOutput = ""; // Holds the final, combined text for display
 
 // --- Main Execution ---
 
-// 1. Enter the Alternate Screen Buffer immediately.
 await Deno.stdout.write(encoder.encode(enterAlternateScreen));
 
 try {
-  // The `for await` loop handles the streaming input.
   for await (const chunk of Deno.stdin.readable) {
-    inputBuffer += decoder.decode(chunk, { stream: true });
+    rawInputBuffer += decoder.decode(chunk, { stream: true });
 
-    let processedBuffer = inputBuffer;
-    const match = inputBuffer.match(thinkingRegex);
+    // --- 1. Separate Content ---
+    let thinkingBlock = "";
+    let mainContent = rawInputBuffer; // Assume no thinking block initially
 
+    const match = rawInputBuffer.match(thinkingRegex);
     if (match) {
-      const thinkingBlock = match[1];
-      const restOfBuffer = inputBuffer.substring(match[0].length);
-      processedBuffer = `${gray}${thinkingBlock}${reset}\n\n${restOfBuffer}`;
+      // If found, separate the thinking block from the main content
+      thinkingBlock = match[1];
+      mainContent = rawInputBuffer.substring(match[0].length);
     }
 
-    // Render the current buffer with glow
+    // --- 2. Fix and Render ONLY the Main Content ---
+    // First, fix any indented headings in the pure markdown content
+    const cleanMainContent = mainContent.replace(headingFixRegex, "$1");
+
+    // Now, pipe ONLY the clean markdown to glow
     const cmd = new Deno.Command("glow", {
       args: ["--style", "dark", "--width", "100"],
       stdin: "piped",
@@ -51,36 +54,44 @@ try {
     });
     const child = cmd.spawn();
     const writer = child.stdin.getWriter();
-    await writer.write(encoder.encode(processedBuffer));
+    await writer.write(encoder.encode(cleanMainContent));
     writer.close();
     const { stdout } = await child.output();
+    const renderedMainContent = decoder.decode(stdout);
 
-    // Do all rendering inside the alternate screen.
+    // --- 3. Assemble the Final View ---
+    let displayOutput = "";
+    if (thinkingBlock) {
+      // Manually color our separated thinking block and combine it
+      const formattedThinkingBlock = `${gray}${thinkingBlock}${reset}`;
+      displayOutput = `${formattedThinkingBlock}\n\n${renderedMainContent}`;
+    } else {
+      // If no thinking block, the display is just the rendered content
+      displayOutput = renderedMainContent;
+    }
+
+    // --- 4. Render to Alternate Screen ---
     console.clear();
-    await Deno.stdout.write(stdout);
+    await Deno.stdout.write(encoder.encode(displayOutput));
 
-    // Keep a copy of the latest rendered output for the final display.
-    finalRenderedOutput = decoder.decode(stdout);
+    // Keep a copy for the final print after exiting the alternate screen
+    finalDisplayOutput = displayOutput;
   }
 } finally {
-  // ALWAYS exit the Alternate Screen, even if there's an error.
   await Deno.stdout.write(encoder.encode(exitAlternateScreen));
 }
 
-// After exiting the alternate screen, print the single, final, RENDERED output
-// to the NORMAL terminal for the user to see.
-if (finalRenderedOutput) {
-  Deno.stdout.write(encoder.encode(finalRenderedOutput));
+// After exiting, print the single, final display output to the NORMAL terminal
+if (finalDisplayOutput) {
+  Deno.stdout.write(encoder.encode(finalDisplayOutput));
 }
 
-// --- FINALIZATION STEP ---
-// Now, clean the RAW buffer and write it to the file for the bash script.
-let finalCleanResponse = inputBuffer;
-const finalMatch = inputBuffer.match(thinkingRegex);
+// --- FINALIZATION STEP for History ---
+// We use the final raw buffer to extract the clean response for the shell script
+let finalCleanResponse = rawInputBuffer;
+const finalMatch = rawInputBuffer.match(thinkingRegex);
 if (finalMatch) {
-  // If a thinking block exists, the clean response is everything AFTER it.
-  finalCleanResponse = inputBuffer.substring(finalMatch[0].length);
+  finalCleanResponse = rawInputBuffer.substring(finalMatch[0].length);
 }
 
-// Write the clean, trimmed response to the file the bash script is waiting for.
 await Deno.writeTextFile(cleanOutputFile, finalCleanResponse.trim());
