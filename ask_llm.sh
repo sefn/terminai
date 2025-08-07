@@ -13,9 +13,9 @@ trap 'rm -rf "$LOCK_DIR"' EXIT
 MODEL=${1:-"gpt-oss:20b"}
 
 # Get the prompt from the user using an input box
-#PROMPT=$(kdialog --title "Ask LLM" --inputbox "Enter your prompt for $MODEL:")
-# Alternatively, comment above and uncomment or add your own tool for the interface:
+# wofi default, feel free to uncomment alternatives or add your own tool for the interface:
 PROMPT=$(wofi --dmenu --prompt "$PROMPT_TEXT" --lines 1 --hide-scroll --no-actions)
+#PROMPT=$(kdialog --title "Ask LLM" --inputbox "Enter your prompt for $MODEL:")
 #PROMPT=$(rofi --dmenu --prompt "$PROMPT_TEXT" --lines 1 --hide-scroll --no-actions)
 
 if [ $? -ne 0 ] || [ -z "$PROMPT" ]; then
@@ -32,17 +32,17 @@ SCRIPTLET='
     local current_prompt="$2"
     local model="$1"
 
-    # -- MEMORY: Use a temporary file for the CLEANED response --
+    # -- MEMORY: Use a temporary file for the cleaned response --
     local clean_response_file
     clean_response_file=$(mktemp)
 
     # Pipe the raw output to the Deno script and pass the temporary filename
     # as an argument for the script to write the clean response to.
-    /usr/bin/stdbuf -oL /usr/local/bin/ollama run "$model" "$CONVERSATION_HISTORY $current_prompt" | \
-    /home/linuxbrew/.linuxbrew/bin/deno run --allow-read --allow-write --allow-run "$RENDERER_SCRIPT" "$clean_response_file"
+    stdbuf -oL ollama run "$model" "$CONVERSATION_HISTORY $current_prompt" | \
+    deno run --allow-read --allow-write --allow-run "$RENDERER_SCRIPT" "$clean_response_file"
 
-    # -- MEMORY: Update the history with the CLEAN exchange --
-    # The response is read from the file prepared by our Deno script.
+    # -- MEMORY: Update the history with the cleaned exchange --
+    # The response is read from the file prepared by the Deno script
     local assistant_response
     assistant_response=$(<"$clean_response_file")
     
