@@ -62,7 +62,7 @@ try {
     // --- 3. Assemble the Final View ---
     let displayOutput = "";
     if (thinkingBlock) {
-      // Manually color our separated thinking block and combine it
+      // Manually color the separated thinking block and combine it
       const formattedThinkingBlock = `${gray}${thinkingBlock}${reset}`;
       displayOutput = `${formattedThinkingBlock}\n\n${renderedMainContent}`;
     } else {
@@ -70,7 +70,7 @@ try {
       displayOutput = renderedMainContent;
     }
 
-    // --- 4. Render to Alternate Screen ---
+    // --- 4. Render to alternate screen ---
     console.clear();
     await Deno.stdout.write(encoder.encode(displayOutput));
 
@@ -81,13 +81,13 @@ try {
   await Deno.stdout.write(encoder.encode(exitAlternateScreen));
 }
 
-// After exiting, print the single, final display output to the NORMAL terminal
+// After exiting, print the single, final display output to the regular terminal
 if (finalDisplayOutput) {
   Deno.stdout.write(encoder.encode(finalDisplayOutput));
 }
 
-// --- FINALIZATION STEP for History ---
-// We use the final raw buffer to extract the clean response for the shell script
+// --- Cleanup for history ---
+// Use the final raw buffer to extract the clean response for the shell script
 let finalCleanResponse = rawInputBuffer;
 const finalMatch = rawInputBuffer.match(thinkingRegex);
 if (finalMatch) {
