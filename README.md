@@ -1,7 +1,7 @@
 # terminai
 Local LLM chat interface for Linux.
 
-Keyboard shortcut to open a prompt dialog, then terminal for output and further chat (with formatting for markdown and thinking tags, chat history).
+Usage: Set a keyboard shortcut to launch the script. Opens a prompt dialog, then a terminal for output and further chat (with formatting for markdown and thinking tags, chat history).
 
 ## Features
 
