@@ -1,21 +1,21 @@
 # terminai
 Local LLM chat interface for Linux.
 
-Usage: Set a keyboard shortcut to launch the script. Opens a prompt dialog, then a terminal for output and further chat (with formatting for markdown and thinking tags, chat history).
+Usage: Set a keyboard shortcut to launch the script. This opens a prompt dialog, then a terminal for output and further chat (with formatting for markdown and thinking tags, and chat history).
 
 ## Features
 
-Portable and modifiable.
-Use a dialog like wofi or kdialog for the prompt, and a terminal (e.g. ptyxis or whatever you like) for streaming output and allowing subsequent prompts with memory. Markdown formatting (and formatting of thinking tags) with deno + glow.
+Portable and customizable.
+Uses a dialog like wofi or kdialog for the prompt, and a terminal (e.g. ptyxis or whatever you like) for streaming output and allowing subsequent prompts with memory. Markdown formatting (and formatting of thinking tags) with deno + glow.
 
 ## Dependencies
 
-* Ollama (with any model installed, e.g. gpt-oss or gemma3 etc)
+* Ollama (with any model installed, e.g. gpt-oss or gemma3, etc.)
 * Deno (for running glow with streaming)
 * glow (for markdown formatting output)
-* stdbuf (for streaming)
 * wofi, or kdialog or rofi (for the dialog prompt. wofi is default, you can modify a single line (PROMPT variable) in `ask_llm.sh` with your dialog tool of choice)
 * a terminal of your choice (for the output. kde-ptyxis is default, but you can modify a single line (the last one) in `ask_llm.sh` with your terminal of choice)
+* stdbuf (for streaming)
 * tee
 
 ## Installation
@@ -40,3 +40,6 @@ wofi version of prompt dialog:
 Terminal output:
 <img width="1274" height="2097" alt="image" src="https://github.com/user-attachments/assets/22597d5a-8995-4155-8455-4a8026619004" />
 (Notice the continuous chat, formatting (of markdown and thinking tags (gpt-oss in this example)) and history/memory of the previous prompt)
+
+You can also customize the width of glow's output in `render_stream.ts`, e.g. to 200:
+<img width="2281" height="1420" alt="image" src="https://github.com/user-attachments/assets/9dcab3ff-f9dc-493d-b36d-1622f174c094" />
