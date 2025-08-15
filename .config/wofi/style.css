@@ -1,4 +1,6 @@
-indow {
+/* NOTE! Remember to update path to the .svg further down (<ABSOLUTE_PATH_TO_YOUR_HOME_DIR>) */
+
+window {
 margin: 0px;
 border: 0px solid #88c0d0;
 background-color: #2e3440;
@@ -38,6 +40,7 @@ color: #d8dee9;
 background-color: #3b4252;
 }
 
+/* Custom css to make the wofi prompt look fit for an LLM prompt (with the ASK LLM > .svg and positioning) */
 #input {
     margin: 5px;
     color: #d8dee9;
@@ -46,14 +49,13 @@ background-color: #3b4252;
 
     padding-left: 60px;
 
+    /* Update path to the .svg here! */
     background-image: url("<ABSOLUTE_PATH_TO_YOUR_HOME_DIR>/.config/wofi/prompt_arrow.svg");
 
-    /* 3. Position the icon on the left side and prevent it from repeating */
     background-repeat: no-repeat;
     background-position: 8px center; /* Adjust positioning as needed */
 }
 
-/* This rule is still needed to hide the original search icon */
 #input > image.left {
     -gtk-icon-transform: scaleX(0);
 }
