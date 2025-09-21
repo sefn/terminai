@@ -1,6 +1,17 @@
 #!/bin/bash
 
-# Lock file
+# ---- CONFIGURATION ----
+# Model to use for the chat
+MODEL=${1:-"gpt-oss:20b"}
+
+# Terminal to use
+launch_terminal() {
+    local script_to_run="$1"
+    foot -W 200x40 --title "LLM Chat: $MODEL" "$script_to_run"
+}
+# ---- END CONFIGURATION ----
+
+# ---- SCRIPT LOGIC ----
 LOCK_DIR="/tmp/ask_llm.lock"
 if ! mkdir "$LOCK_DIR" 2>/dev/null; then
     echo "Another instance is already running."
@@ -8,69 +19,73 @@ if ! mkdir "$LOCK_DIR" 2>/dev/null; then
 fi
 trap 'rm -rf "$LOCK_DIR"' EXIT
 
-# Get the model name from the first argument, or use a default
-#MODEL=${1:-"gemma3:27b"}
-MODEL=${1:-"gpt-oss:20b"}
+# Create the helper script file
+HELPER_SCRIPT=$(mktemp)
 
-# Get the prompt from the user using an input box
-# wofi default, feel free to uncomment alternatives or add your own tool for the interface:
+# Get the initial prompt from the user
 PROMPT=$(wofi --dmenu --prompt "$PROMPT_TEXT" --lines 1 --hide-scroll --no-actions)
-#PROMPT=$(kdialog --title "Ask LLM" --inputbox "Enter your prompt for $MODEL:")
-#PROMPT=$(rofi --dmenu --prompt "$PROMPT_TEXT" --lines 1 --hide-scroll --no-actions)
-
 if [ $? -ne 0 ] || [ -z "$PROMPT" ]; then
+    rm -f "$HELPER_SCRIPT"
     exit 0
 fi
 
-SCRIPTLET='
-  RENDERER_SCRIPT="/usr/local/bin/render_stream.ts"
+# --- Dynamically generate the helper script content ---
+# Note: Expects render_stream to have this path: /usr/local/bin/render_stream.ts
+# Adjust absolute paths to dependency runtimes like stdbuf, ollama and deno if applicable
+cat > "$HELPER_SCRIPT" << EOF
+#!/bin/bash
 
-  # -- MEMORY: Initialize an empty conversation history --
-  CONVERSATION_HISTORY=""
+trap 'rm -f "\$0"' EXIT
 
-  run_chat() {
-    local current_prompt="$2"
-    local model="$1"
+MODEL_NAME="$MODEL"
+INITIAL_PROMPT="$PROMPT"
 
-    # -- MEMORY: Use a temporary file for the cleaned response --
+RENDERER_SCRIPT="/usr/local/bin/render_stream.ts"
+CONVERSATION_HISTORY=""
+
+run_chat() {
+    local current_prompt="\$2"
+    local model="\$1"
     local clean_response_file
-    clean_response_file=$(mktemp)
+    clean_response_file=\$(mktemp)
 
-    # Pipe the raw output to the Deno script and pass the temporary filename
-    # as an argument for the script to write the clean response to.
-    stdbuf -oL ollama run "$model" "$CONVERSATION_HISTORY $current_prompt" | \
-    deno run --allow-read --allow-write --allow-run "$RENDERER_SCRIPT" "$clean_response_file"
+    stdbuf -oL ollama run "\$model" "\$CONVERSATION_HISTORY \$current_prompt" | \\
+    deno run --allow-read --allow-write --allow-run "\$RENDERER_SCRIPT" "\$clean_response_file"
 
-    # -- MEMORY: Update the history with the cleaned exchange --
-    # The response is read from the file prepared by the Deno script
     local assistant_response
-    assistant_response=$(<"$clean_response_file")
-    
-    if [ -n "$assistant_response" ]; then
-        CONVERSATION_HISTORY+="User: $current_prompt\nAssistant: $assistant_response\n\n"
+    assistant_response=\$(<"\$clean_response_file")
+
+    if [ -n "\$assistant_response" ]; then
+        CONVERSATION_HISTORY+="User: \$current_prompt\nAssistant: \$assistant_response\n\n"
     fi
 
-    # Clean up the temporary file
-    rm "$clean_response_file"
-  }
+    rm "\$clean_response_file"
+}
 
-  echo "Chatting with $1. Type '\''exit'\'' or '\''quit'\'' to close."
-  echo "---"
+echo "Chatting with \$MODEL_NAME. Type 'exit' or 'quit' to close."
+echo "---"
 
-  # Run the initial prompt
-  run_chat "$1" "$2"
-  echo "---"
+run_chat "\$MODEL_NAME" "\$INITIAL_PROMPT"
+echo "---"
 
-  while true; do
-    read -p ">> " follow_up_prompt
-    if [[ "$follow_up_prompt" == "exit" || "$follow_up_prompt" == "quit" ]]; then
+while true; do
+    follow_up_prompt=\$(gum write --placeholder "")
+
+    if [ -z "\$follow_up_prompt" ]; then
+      continue
+    fi
+
+    if [[ "\$follow_up_prompt" == "exit" || "\$follow_up_prompt" == "quit" ]]; then
       break
     fi
-    # Run follow-up prompt
-    run_chat "$1" "$follow_up_prompt"
-    echo "---"
-  done
-'
 
-# Output in terminal - modify for your terminal of choice.
-kde-ptyxis --title "LLM Chat: $MODEL" -x "sh -c '$SCRIPTLET' _ \"$MODEL\" \"$PROMPT\""
+    run_chat "\$MODEL_NAME" "\$follow_up_prompt"
+    echo "---"
+done
+EOF
+
+# Make the helper script executable
+chmod +x "$HELPER_SCRIPT"
+
+# Launch terminal
+launch_terminal "$HELPER_SCRIPT"
