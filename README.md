@@ -13,6 +13,7 @@ Uses a dialog like wofi or kdialog for the prompt, and a terminal (e.g. ptyxis o
 * Ollama (with any model installed, e.g. gpt-oss or gemma3, etc.)
 * Deno (for running glow with streaming)
 * glow (for markdown formatting output)
+* gum (allowing multi-line input in the prompt, or using your favorite text editor to prompt)
 * wofi, or kdialog or rofi (for the dialog prompt. wofi is default, you can modify a single line (PROMPT variable) in `ask_llm.sh` with your dialog tool of choice)
 * a terminal of your choice (for the output. kde-ptyxis is default, but you can modify a single line (the last one) in `ask_llm.sh` with your terminal of choice)
 * stdbuf (for streaming)
@@ -43,3 +44,6 @@ Terminal output:
 
 You can also customize the width of glow's output in `render_stream.ts`, e.g. to 200:
 <img width="2281" height="1420" alt="image" src="https://github.com/user-attachments/assets/9dcab3ff-f9dc-493d-b36d-1622f174c094" />
+
+Updated version with multi-line input in the prompt, and support for Magistral thinking tags:
+<img width="2275" height="1111" alt="image" src="https://github.com/user-attachments/assets/8500c7b5-8c87-4980-828c-19e755852f38" />
