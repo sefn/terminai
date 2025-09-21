@@ -1,5 +1,19 @@
 #!/usr/bin/env -S deno run --allow-read --allow-write --allow-run
 
+/**
+ * This script processes a stream from stdin (e.g., from ollama).
+ *
+ * It performs two main tasks:
+ * 1. Streams the output directly to stdout for the user to see in real-time.
+ * 2. Filters out "thinking" blocks/tags from the stream.
+ * 3. Writes the final, "clean" response (without thinking blocks) to a specified file.
+ *
+ * It now supports two types of thinking tags:
+ * - "Thinking.... " and ".... done thinking" (e.g. gpt-oss:20b)
+ * - "[THINK]" and "[/THINK]" (e.g. Magistral)
+ * To add more thinking tags, adjust the thinkingRegex.
+ */
+
 // --- Get the output filename from command-line arguments ---
 const cleanOutputFile = Deno.args[0];
 if (!cleanOutputFile) {
@@ -17,7 +31,7 @@ const gray = "\x1b[90m";
 const reset = "\x1b[0m";
 
 // Regexes
-const thinkingRegex = /^(Thinking\.*.*?\.*done thinking\.?)\s*/s;
+const thinkingRegex = /((?:Thinking\.*.*?\.{4} done thinking)|(?:\[THINK\][\s\S]*?\[\/THINK\]))/s;
 const headingFixRegex = /^\s+(#+)/gm; // Fix for indented headings
 
 let rawInputBuffer = ""; // Holds the pure, raw text from ollama
@@ -47,10 +61,12 @@ try {
     const cleanMainContent = mainContent.replace(headingFixRegex, "$1");
 
     // Now, pipe ONLY the clean markdown to glow
+    // Note: adjust the width (of content) or text style to your preference
     const cmd = new Deno.Command("glow", {
-      args: ["--style", "dark", "--width", "100"],
+      args: ["--style", "dark", "--width", "200"],
       stdin: "piped",
       stdout: "piped",
+      stderr: "piped",
     });
     const child = cmd.spawn();
     const writer = child.stdin.getWriter();
@@ -70,7 +86,7 @@ try {
       displayOutput = renderedMainContent;
     }
 
-    // --- 4. Render to alternate screen ---
+    // --- 4. Render to Alternate Screen ---
     console.clear();
     await Deno.stdout.write(encoder.encode(displayOutput));
 
@@ -81,13 +97,13 @@ try {
   await Deno.stdout.write(encoder.encode(exitAlternateScreen));
 }
 
-// After exiting, print the single, final display output to the regular terminal
+// After exiting, print the single, final display output to the NORMAL terminal
 if (finalDisplayOutput) {
   Deno.stdout.write(encoder.encode(finalDisplayOutput));
 }
 
-// --- Cleanup for history ---
-// Use the final raw buffer to extract the clean response for the shell script
+// --- FINALIZATION STEP for History ---
+// We use the final raw buffer to extract the clean response for the shell script
 let finalCleanResponse = rawInputBuffer;
 const finalMatch = rawInputBuffer.match(thinkingRegex);
 if (finalMatch) {
