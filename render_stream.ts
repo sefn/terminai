@@ -16,6 +16,7 @@
 
 // --- Get the output filename from command-line arguments ---
 const cleanOutputFile = Deno.args[0];
+const userPrompt = Deno.args[1];
 if (!cleanOutputFile) {
   console.error("Error: Output file path argument is missing.");
   Deno.exit(1);
@@ -28,6 +29,7 @@ const encoder = new TextEncoder();
 const enterAlternateScreen = "\x1b[?1049h";
 const exitAlternateScreen = "\x1b[?1049l";
 const gray = "\x1b[90m";
+const cyan = "\x1b[36m";
 const reset = "\x1b[0m";
 
 // Regexes
@@ -40,6 +42,10 @@ let finalDisplayOutput = ""; // Holds the final, combined text for display
 // --- Main Execution ---
 
 await Deno.stdout.write(encoder.encode(enterAlternateScreen));
+
+// Display the user's prompt immediately before waiting for the AI
+const formattedPrompt = `${cyan}> You: ${userPrompt}${reset}\n`;
+await Deno.stdout.write(encoder.encode(formattedPrompt));
 
 try {
   for await (const chunk of Deno.stdin.readable) {
@@ -78,12 +84,12 @@ try {
     // --- 3. Assemble the Final View ---
     let displayOutput = "";
     if (thinkingBlock) {
-      // Manually color the separated thinking block and combine it
+      // With thinking models, color the separated thinking block and combine it
       const formattedThinkingBlock = `${gray}${thinkingBlock}${reset}`;
-      displayOutput = `${formattedThinkingBlock}\n\n${renderedMainContent}`;
+      displayOutput = `${formattedPrompt}\n${formattedThinkingBlock}\n\n${renderedMainContent}`;
     } else {
-      // If no thinking block, the display is just the rendered content
-      displayOutput = renderedMainContent;
+      // If no thinking block, the display is just the user prompt and rendered content
+      displayOutput = `${formattedPrompt}\n${renderedMainContent}`;
     }
 
     // --- 4. Render to Alternate Screen ---
