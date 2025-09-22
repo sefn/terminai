@@ -2,7 +2,7 @@
 
 # ---- CONFIGURATION ----
 # Model to use for the chat
-MODEL=${1:-"gpt-oss:20b"}
+MODEL=${1:-"magistral-small-2509-codiac:latest"}
 
 # Terminal to use
 launch_terminal() {
@@ -50,7 +50,7 @@ run_chat() {
     clean_response_file=\$(mktemp)
 
     stdbuf -oL ollama run "\$model" "\$CONVERSATION_HISTORY \$current_prompt" | \\
-    deno run --allow-read --allow-write --allow-run "\$RENDERER_SCRIPT" "\$clean_response_file"
+    /home/linuxbrew/.linuxbrew/bin/deno run --allow-read --allow-write --allow-run "\$RENDERER_SCRIPT" "\$clean_response_file" "\$current_prompt"
 
     local assistant_response
     assistant_response=\$(<"\$clean_response_file")
@@ -63,10 +63,13 @@ run_chat() {
 }
 
 echo "Chatting with \$MODEL_NAME. Type 'exit' or 'quit' to close."
+echo
 echo "---"
+echo
 
 run_chat "\$MODEL_NAME" "\$INITIAL_PROMPT"
 echo "---"
+echo
 
 while true; do
     follow_up_prompt=\$(gum write --placeholder "")
@@ -81,6 +84,7 @@ while true; do
 
     run_chat "\$MODEL_NAME" "\$follow_up_prompt"
     echo "---"
+    echo
 done
 EOF
 
