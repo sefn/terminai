@@ -38,12 +38,8 @@ If you use wofi, you can copy-paste the contents of .config/wofi to your home fo
 wofi version of prompt dialog:
 <img width="853" height="118" alt="image" src="https://github.com/user-attachments/assets/b599f766-d5b4-4b52-9f71-68049a2690d1" />
 
-Terminal output:
-<img width="1274" height="2097" alt="image" src="https://github.com/user-attachments/assets/22597d5a-8995-4155-8455-4a8026619004" />
-(Notice the continuous chat, formatting (of markdown and thinking tags (gpt-oss in this example)) and history/memory of the previous prompt)
-
-You can also customize the width of glow's output in `render_stream.ts`, e.g. to 200:
-<img width="2281" height="1420" alt="image" src="https://github.com/user-attachments/assets/9dcab3ff-f9dc-493d-b36d-1622f174c094" />
-
-Updated version with multi-line input in the prompt, support for Magistral thinking tags, and foot as default terminal (can of course be modified to your favorite terminal of use in the `ask_llm.sh` script:
+Terminal output (showing multi-line input in the prompt, support for Magistral thinking tags). Foot is default terminal but can of course be modified to your favorite terminal of use in the `ask_llm.sh` script:
 <img width="2275" height="1111" alt="image" src="https://github.com/user-attachments/assets/8500c7b5-8c87-4980-828c-19e755852f38" />
+
+Updated version with now showing the user's prompt in the output:
+<img width="2279" height="1499" alt="image" src="https://github.com/user-attachments/assets/7be355df-c105-4037-93ba-0c576509c06b" />
