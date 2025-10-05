@@ -50,7 +50,7 @@ run_chat() {
     clean_response_file=\$(mktemp)
 
     stdbuf -oL ollama run "\$model" "\$CONVERSATION_HISTORY \$current_prompt" | \\
-    /home/linuxbrew/.linuxbrew/bin/deno run --allow-read --allow-write --allow-run "\$RENDERER_SCRIPT" "\$clean_response_file" "\$current_prompt"
+    deno run --allow-read --allow-write --allow-run "\$RENDERER_SCRIPT" "\$clean_response_file" "\$current_prompt"
 
     local assistant_response
     assistant_response=\$(<"\$clean_response_file")
