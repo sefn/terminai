@@ -21,6 +21,8 @@ Uses a dialog like wofi or kdialog for the prompt, and a terminal (e.g. ptyxis o
 
 ## Installation
 
+(Debug): Migrated from Typescript to Rust
+
 Move `render_stream.ts` and `ask_llm.sh` to `/usr/local/bin` and make them executable with `chmod +x`.
 
 Then add a keyboard shortcut to launch `ask_llm.sh`, for example SUPER+Backspace, in your DE of choice (e.g. KDE).
